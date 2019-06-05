@@ -16,7 +16,7 @@ def def_parser():
     parser.add_argument('-al', '--alpha', dest='al', help='Traffic Rate alpha(Mbps)', type=float, required=True)
     parser.add_argument('-o', '--output', dest='o', help='Output file name',type=str, default='traffic.txt')
     parser.add_argument('-s', '--seed', dest='s', help='Random seed', type=int, default=10)
-    parser.add_argument('-x', '--shiyan', dest='x', help='x-th shiyan', type=int, default=1)
+    parser.add_argument('-x', '--tfrate', dest='x', help='traffic ampilfication rate', type=int, default=1)
     return parser
 
 # 参数解析
@@ -28,8 +28,8 @@ def parse_args(parser):
     return opts
 
 def generateSFC():
-    vnfSum = 60                         # 共有60个vnf
-    sfcLen = random.randint(1, 10)      # SFC长度[1,5]
+    vnfSum = 60                         # vnf number 60
+    sfcLen = random.randint(1, 10)      # SFC length[1,5]
     vnfs = random.sample(range(vnfSum), sfcLen)
     return [sfcLen, vnfs]
 
@@ -45,8 +45,9 @@ def calcTrafficRate(Tm, alpha, x):
 def generateATraffic(args, file):
     global DELIM, NEWLINE
     x,y = int(args['min']), int(args['max'])
-    src = random.randint(x, (3*x+y)//4)                         # 源
-    dst = random.randint((x+3*y)//4, y)                         # 目的
+    src = random.randint(x, (3*x+y)//4)                         # source, why is source point located in the first quarter part?
+    dst = random.randint((x+3*y)//4, y)                         # destination,  why is destination point located in the last three quarters part?
+
     # src = random.randint(args['min'], args['max'])          # 源
     # dst = random.randint(args['min'], args['max'])          # 目的
     [tr, peak] = calcTrafficRate(args['Tm'], args['al'], args['x'])
@@ -55,7 +56,7 @@ def generateATraffic(args, file):
 
 def main():
     try:
-        arguments = parse_args(def_parser())
+        arguments = parse_args(def_parser()) 
         random.seed(arguments['s'])
         file = open(arguments['o'], 'w')
         for i in range(arguments['c']):

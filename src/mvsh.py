@@ -214,6 +214,13 @@ def mvshPlaceDemand(demand, topo):
         for j in range(servListLen):
             servNo = serversNoList[j]
             LeftMips = topo.serverLeftMips(int(servNo))
+            if(exp==1):
+                print(mips)
+                print(servNo)
+                print(topo.getScaleOfServers(int(servNo)))
+                print(exp)
+                print(mips*(exp-1))
+                print(max(topo.getScaleOfServers(int(servNo)), mips*(exp-1)))
             gamma_v = (LeftMips - mips) /  max(topo.getScaleOfServers(int(servNo)), mips*(exp-1))      
             row.append(gamma_v)
         Matrix.append(row)

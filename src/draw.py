@@ -66,7 +66,7 @@ def main():
     algList = ['mvsh', 'svnf', 'clbp']
     plr2List = []
     for alg in algList:
-        path = 'expri' + str(args['x']) + '/placeResult/plr2List_'       + alg + '-c' + str(dNum) + 's' + str(args['s'])+'x'+str(args['x']+1) + '.dat'
+        path = 'expri' + str(args['x']) + '/placeResult/plr2List_'       + alg + '-c' + str(dNum) + 's' + str(args['s'])+'x'+str(args['x']) + '.dat'
         f = open(path, 'rb')
         plr2List.append(pickle.load(f))
         f.close()
@@ -74,13 +74,13 @@ def main():
     #     print(len(plr2List[i]), plr2List[i][149])
     bsrList = []
     for alg in algList:
-        path = 'expri' + str(args['x']) + '/placeResult/percentPlrList_' + alg + '-c' + str(dNum) + 's' + str(args['s'])+'x'+str(args['x']+1) + '.dat'
+        path = 'expri' + str(args['x']) + '/placeResult/percentPlrList_' + alg + '-c' + str(dNum) + 's' + str(args['s'])+'x'+str(args['x']) + '.dat'
         f = open(path, 'rb')
         bsrList.append(pickle.load(f))
         f.close()
     suList = []
     for alg in algList:
-        path = 'expri' + str(args['x']) + '/placeResult/SUList_'         + alg + '-c' + str(dNum) + 's' + str(args['s'])+'x'+str(args['x']+1) + '.dat'
+        path = 'expri' + str(args['x']) + '/placeResult/SUList_'         + alg + '-c' + str(dNum) + 's' + str(args['s'])+'x'+str(args['x']) + '.dat'
         f = open(path, 'rb')
         suList.append(pickle.load(f))
         f.close()
