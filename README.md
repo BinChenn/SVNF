@@ -10,29 +10,27 @@ VNF放置算法运行和压力测试系统
 
 ## 依赖库
 
-请安装python3、argparse、numpy、matplotlib等依赖库，推荐直接安装anaconda、然后用pip3安装numpy。
+请安装python3、argparse、numpy、matplotlib等依赖库。
 
-## 使用说明
+## 使用说明（以实验一为例）
 
 1.生成流量
 
 ```console
-python3 traffic.py -c 1000 -k 20 -Tm 10 -al 2.1 -s 10 -o output/traffic.txt
+python traffic.py -c 500 -k 10 -Tm 10 -al 2.1 -s 20 -o expri1/traffic/traffic-c500s20.txt -x 1
 ```
-
 + -c 指定生成的流量条数，默认1000条
 + -k 指定拓扑基于 k-阶胖树 拓扑。决定了服务器编号的起始地址和终止地址 [(5k^2)/4 , (5k^2)/4 + (3k^3)/4 -1 ]
 + -Tm 指定最小流速率
 + -al 指定tr与Tm的关系因子
 + -s 指定随机数的起始随机种子
 + -o 指定输出结果存储到的文件名
++ -x 指定流量放大比
 
 2.运行SVNFP算法，进行VNF放置
 
 ```console
-python3 svnfp.py -k 20 -i output/traffic.txt -o output/result.txt -n
-或简写如下：
-python3 svnfp.py -k 20 -n
+python svnfp.py -k 10 -i expri1/traffic/traffic-c500s20.txt -o expri1/placeResult/result_svnf-c500s20.txt -n 
 ```
 
 + -i 指定读入文件名
@@ -41,9 +39,7 @@ python3 svnfp.py -k 20 -n
 3.分析结果，统计该放置方法的总FPL、AR值
 
 ```console
-python3 resultAnalysis.py -k 20 -i output/result.txt -o output/analysis.txt
-或简写如下：
-python3 resultAnalysis.py -k 20
+python resultAnalysis.py -c 500 -k 10 -i expri1/placeResult/result_svnf-c500s20.txt -o expri1/staticAnalysis/analysis_svnf-c500s20.txt  -a svnf -x 1
 ```
 
 + -i 指定读入文件名
@@ -87,9 +83,7 @@ plr2 记录总的丢包率。$plr = 总丢包率/总服务器数量$
 1.plr.py 负责重放结果，输出数据
 
 ```console
-python3 plr.py -c 1000 -k 20 -i ../output/result.txt -o ../output/plr.txt -s 10
-或简写如下：
-python3 plr.py
+python plr.py -c 500 -k 10 -i expri1/placeResult/result_svnf-c500s20.txt -s 20 -o expri1/evaluation/plr_svnf-c500s20.txt -a svnf -x 1 
 ```
 
 + -c 指定生成的流量条数，默认1000条
@@ -101,7 +95,7 @@ python3 plr.py
 2.draw.py负责画图
 
 ```console
-python3 draw.py
+python draw.py -c 500 -s 20 -x 1
 ```
 
 ## 实验
