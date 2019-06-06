@@ -22,10 +22,14 @@ def def_parser():
     parser = argparse.ArgumentParser(description='Analyzing Place Results!')
     parser.add_argument('-c', '--count', dest='c', help='How many service request', type=int, default=1000)
     parser.add_argument('-k', '--k-ray', dest='k', help='K parameter of K-ary fattree', type=int, required=True)
+    '''
     parser.add_argument('-i', '--input', dest='i', help='place results file (default is output/result.txt)',
                         type=str, default='output/result.txt')
     parser.add_argument('-o', '--output', dest='o', help='analysis file name (default is output/analysis.txt)',
                         type=str, default='output/plr.txt')
+    default input: expri[x]/placeResult/result_[a]-c[c]s[s].txt
+    default output: expri[x]/evaluation/plr_[a]-c[c]s[s].txt                    
+    '''
     parser.add_argument('-n', '--no', dest='n', help='No id in request file',
                         action='store_true')
     parser.add_argument('-s', '--seed', dest='s', help='Random seed', type=int, default=10)
@@ -37,8 +41,9 @@ def def_parser():
 def parse_args(parser):
     global PLACE_FORMAT
     opts = vars(parser.parse_args(sys.argv[1:]))
-    if not os.path.isfile(opts['i']):
-        raise Exception('Demands file \'%s\' does not exist!' % opts['i'])
+    inputpath = 'expri'+str(opts['x'])+'/placeResult/result_'+str(opts['a'])+'-c'+str(opts['c'])+'s'+str(opts['s'])+'.txt'
+    if not os.path.isfile(inputpath):
+        raise Exception('Demands file \'%s\' does not exist!' % inputpath)
     PLACE_FORMAT = PLACE_FORMAT1 if opts['n'] else PLACE_FORMAT2
     return opts
 
@@ -93,7 +98,8 @@ def write_to_file(handle, placeResult):
 def main():
     args = parse_args(def_parser())
     random.seed(args['s'])
-    with open(args['i']) as handle:
+    inputpath = 'expri'+str(args['x'])+'/placeResult/result_'+str(args['a'])+'-c'+str(args['c'])+'s'+str(args['s'])+'.txt'
+    with open(inputpath) as handle:
         results = parseResults(handle)
     topo = fattree.FatTree(args['k'])
     # print('------1. before exp------')
@@ -105,17 +111,17 @@ def main():
     random.shuffle(expDemandList)
     # print(expDemandList)                              # 流放大顺序 dId列表
     # print(str(args['x']), str(args['a']), os.path.dirname(args['i']))
-    [percentPlrList, plr1List, plr2List, SUList] = topo.expStressTest(expDemandList, results, str(args['x']), str(args['a']), os.path.dirname(args['i']))
-    
-    path = os.path.abspath(args['o'])
+    [percentPlrList, plr1List, plr2List, SUList] = topo.expStressTest(expDemandList, results, str(args['x']), str(args['a']), os.path.dirname(inputpath))
+    outputpath = 'expri'+str(args['x'])+'/evaluation/plr_'+str(args['a'])+'-c'+str(args['c'])+'s'+str(args['s'])+'.txt'
+    path = os.path.abspath(outputpath)
     with open(path, 'w') as handle:
         write_to_file(handle, plr2List)
 
     # 序列化要作图的数据
-    dat0Path = os.path.dirname(args['i']) + '/percentPlrList_'+args['a']+'-c'+str(args['c'])+'s'+str(args['s'])+'x'+str(args['x'])+'.dat'
-    dat1Path = os.path.dirname(args['i']) + '/plr1List_'      +args['a']+'-c'+str(args['c'])+'s'+str(args['s'])+'x'+str(args['x'])+'.dat'
-    dat2Path = os.path.dirname(args['i']) + '/plr2List_'      +args['a']+'-c'+str(args['c'])+'s'+str(args['s'])+'x'+str(args['x'])+'.dat'
-    dat3Path = os.path.dirname(args['i']) + '/SUList_'        +args['a']+'-c'+str(args['c'])+'s'+str(args['s'])+'x'+str(args['x'])+'.dat'
+    dat0Path = os.path.dirname(inputpath) + '/percentPlrList_'+args['a']+'-c'+str(args['c'])+'s'+str(args['s'])+'x'+str(args['x'])+'.dat'
+    dat1Path = os.path.dirname(inputpath) + '/plr1List_'      +args['a']+'-c'+str(args['c'])+'s'+str(args['s'])+'x'+str(args['x'])+'.dat'
+    dat2Path = os.path.dirname(inputpath) + '/plr2List_'      +args['a']+'-c'+str(args['c'])+'s'+str(args['s'])+'x'+str(args['x'])+'.dat'
+    dat3Path = os.path.dirname(inputpath) + '/SUList_'        +args['a']+'-c'+str(args['c'])+'s'+str(args['s'])+'x'+str(args['x'])+'.dat'
     
     f = open(dat0Path, 'wb')
     pickle.dump(percentPlrList, f)

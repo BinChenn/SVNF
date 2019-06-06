@@ -56,19 +56,27 @@ def BFS_hungary(graph):
 def def_parser():
     parser = argparse.ArgumentParser(description='sVNFP algorithm!')
     parser.add_argument('-k', '--k-ray', dest='k', help='K parameter of K-ary fattree', type=int, required=True)
+    '''
     parser.add_argument('-i', '--input', dest='i', help='Demands file (default is output/traffic.txt)',
                         type=str, default='output/traffic.txt')
     parser.add_argument('-o', '--output', dest='o', help='place results file name (default is output/result_rndp.txt)',
                         type=str, default='output/result_rndp.txt')
+    default input: expri[-x]/traffic/traffic-c[-c]s[-s].txt
+    default output: expri[-x]/placeResult/result_mvsh-c[-c]s[-s].txt
+    '''
+    parser.add_argument('-c', '--count', dest='c', help='How many service request', type=int, default=1000)
+    parser.add_argument('-s', '--seed', dest='s', help='Random seed', type=int, default=10)
     parser.add_argument('-n', '--no', dest='n', help='No id in request file',
                         action='store_true')
+    parser.add_argument('-x', '--x-th', dest='x', help='the x-th expriment', type=int, default=1)
     return parser
 
 def parse_args(parser):
     global DEMAND_FORMAT
     opts = vars(parser.parse_args(sys.argv[1:]))
-    if not os.path.isfile(opts['i']):
-        raise Exception('Demands file \'%s\' does not exist!' % opts['i'])
+    inputpath = 'expri'+str(opts['x'])+'/traffic/traffic-c'+str(opts['c'])+'s'+str(opts['s'])+'.txt'
+    if not os.path.isfile(inputpath):
+        raise Exception('Demands file \'%s\' does not exist!' % inputpath)
     DEMAND_FORMAT = DEMAND_FORMAT1 if opts['n'] else DEMAND_FORMAT2
     return opts
 
@@ -254,11 +262,12 @@ def main():
     global placeResult
     args = parse_args(def_parser())
     topo = fattree.FatTree(args['k'])
-
-    with open(args['i']) as handle:
+    inputpath = 'expri'+str(args['x'])+'/traffic/traffic-c'+str(args['c'])+'s'+str(args['s'])+'.txt'
+    with open(inputpath) as handle:
         mvsh(handle, topo)
     
-    path = os.path.abspath(args['o'])
+    outputpath = 'expri'+str(args['x'])+'/placeResult/result_mvsh-c'+str(args['c'])+'s'+str(args['s'])+'.txt'
+    path = os.path.abspath(outputpath)
     with open(path, 'w') as handle:
         write_to_file(handle, placeResult)
 

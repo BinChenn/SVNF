@@ -14,9 +14,10 @@ def def_parser():
     parser.add_argument('-k', '--k-ray', dest='k', help='K parameter of K-ary fattree', type=int, required=True)
     parser.add_argument('-Tm', '--Tmin', dest='Tm', help='Min traffic rate(Mbps)', type=float, required=True)
     parser.add_argument('-al', '--alpha', dest='al', help='Traffic Rate alpha(Mbps)', type=float, required=True)
-    parser.add_argument('-o', '--output', dest='o', help='Output file name',type=str, default='traffic.txt')
+    #parser.add_argument('-o', '--output', dest='o', help='Output file name',type=str, default='traffic.txt')
     parser.add_argument('-s', '--seed', dest='s', help='Random seed', type=int, default=10)
-    parser.add_argument('-x', '--tfrate', dest='x', help='traffic ampilfication rate', type=int, default=1)
+    parser.add_argument('-r', '--tfrate', dest='r', help='traffic ampilfication rate', type=int, default=1)
+    parser.add_argument('-x', '--x-th', dest='x', help='the x-th expriment', type=int, default=1)
     return parser
 
 # 参数解析
@@ -50,7 +51,7 @@ def generateATraffic(args, file):
 
     # src = random.randint(args['min'], args['max'])          # 源
     # dst = random.randint(args['min'], args['max'])          # 目的
-    [tr, peak] = calcTrafficRate(args['Tm'], args['al'], args['x'])
+    [tr, peak] = calcTrafficRate(args['Tm'], args['al'], args['r'])
     [sfcLen, sfc] = generateSFC()
     file.write(str(src) + DELIM + str(dst) + DELIM + str(round(tr,2)) + DELIM + str(round(peak,2))+ DELIM + str(sfcLen) + DELIM + str(sfc))
 
@@ -58,7 +59,8 @@ def main():
     try:
         arguments = parse_args(def_parser()) 
         random.seed(arguments['s'])
-        file = open(arguments['o'], 'w')
+        outputpath = "expri"+str(arguments['x'])+"/traffic/traffic-c"+str(arguments['c'])+"s"+str(arguments['s'])+".txt"
+        file = open(outputpath, 'w') #expri1/traffic/traffic-c500s20.txt
         for i in range(arguments['c']):
             generateATraffic(arguments, file)
             if i < arguments['c'] - 1:      # 去掉最后一行空行
